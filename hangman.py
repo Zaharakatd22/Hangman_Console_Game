@@ -79,15 +79,26 @@ hangman.start()
 
 curr_life: int = 1
 
-while curr_life <= hangman.user_lives:
-    hangman.print_hint()
-    letter: str = input("Input a letter: > ")
-    hangman.check_letter(letter)
-    print()  # Prettify print
-    if hangman.check_word(hangman.hint_word):
-        hangman.user_status = "win"
-        hangman.print_end_game()
+while True:
+    print()
+    request = input('Type "play" to play the game, "exit" to quit: > ')
+    print()
+    if request == "exit":
+        print("Goodbye!")
         break
+    elif request == "play":
+        while curr_life <= hangman.user_lives:
+            hangman.print_hint()
+            letter: str = input("Input a letter: > ")
+            hangman.check_letter(letter)
+            print()  # Prettify print
+            if hangman.check_word(hangman.hint_word):
+                hangman.user_status = "win"
+                hangman.print_end_game()
+                break
 
-else:
-    hangman.print_end_game()
+        else:
+            hangman.print_end_game()
+    else:
+        print("Please input correct request!")
+        print()
