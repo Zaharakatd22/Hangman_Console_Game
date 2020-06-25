@@ -4,37 +4,76 @@ import random
 class Hangman:
     def __init__(self, title: str = "H A N G M A N",
                  announcement: str = "The game will be available soon.",
-                 guessed_words=None):
+                 guessed_words=None,
+                 user_life: int = 8):
         if guessed_words is None:
             guessed_words = ["python", "java", "kotlin", "javascript"]
         self.title: str = title
         self.announcement: str = announcement
         self.guessed_words = guessed_words
         self.guessed_word: str = ""
+        self.hint_word = []
+        self.user_lives: int = user_life
+        self.user_status: str = "hanged"
 
     def print_title(self):
         print(self.title)
+        print()
 
     def print_announce(self):
         print(self.announcement)
+        print()
+
+    def print_hint(self):
+        print("".join(self.hint_word))
+
+    def print_end_game(self):
+        print("Thanks for playing!")
+        print("We'll see how well you did in the next stage")
+        if self.user_status == "win":
+            print("You are winning!")
+        else:
+            print("You are hanged!")
 
     def make_guessed_word(self):
         self.guessed_word = random.choice(self.guessed_words)  # Random choice guessed word
 
-    def check_word(self, user_word: str) -> bool:
-        return user_word == self.guessed_word
+    def generate_hint(self):
+        self.hint_word = ["-" for _ in range(len(self.guessed_word))]  # Generate new hint word
 
-    def hint_word(self) -> str:
-        return self.guessed_word[:3] + "-" * (len(self.guessed_word) - 3)
+    def update_hint(self, guess_letter: str):
+        for i in range(len(self.guessed_word)):
+            if self.guessed_word[i] is guess_letter:
+                self.hint_word[i] = guess_letter
+
+    def check_letter(self, guess_letter: str):
+        if guess_letter in self.guessed_word:
+            self.update_hint(guess_letter)
+        else:
+            print("No such letter in the word")
+
+    def check_word(self, word):
+        return word == self.guessed_word
+
+    def start(self):
+        self.print_title()
+        self.make_guessed_word()
+        self.generate_hint()
 
 
 hangman = Hangman()
+hangman.start()
 
-hangman.print_title()
-hangman.make_guessed_word()
-hint_word: str = hangman.hint_word()
-word: str = input(f"Guess the word {hint_word} : > ")
-if hangman.check_word(word):
-    print("You survived!")
+curr_life: int = 1
+while curr_life <= hangman.user_lives:
+    hangman.print_hint()
+    letter: str = input("Input a letter: > ")
+    hangman.check_letter(letter)
+    print()  # Prettify print
+    if hangman.check_word(hangman.hint_word):
+        hangman.user_status = "win"
+        hangman.print_end_game()
+        break
+    curr_life += 1
 else:
-    print("You are hanged!")
+    hangman.print_end_game()
