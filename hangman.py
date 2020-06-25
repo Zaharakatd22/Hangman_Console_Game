@@ -2,6 +2,7 @@ import random
 
 
 class Hangman:
+
     def __init__(self, title: str = "H A N G M A N",
                  announcement: str = "The game will be available soon.",
                  guessed_words=None,
@@ -15,6 +16,7 @@ class Hangman:
         self.hint_word = []
         self.user_lives: int = user_life
         self.user_status: str = "hanged"
+        self.used_letter = []
 
     def print_title(self):
         print(self.title)
@@ -28,12 +30,13 @@ class Hangman:
         print("".join(self.hint_word))
 
     def print_end_game(self):
-        print("Thanks for playing!")
-        print("We'll see how well you did in the next stage")
         if self.user_status == "win":
-            print("You are winning!")
+            print("You guessed the word!")
+            print("You survived!")
         else:
             print("You are hanged!")
+        print("Thanks for playing!")
+        print("We'll see how well you did in the next stage")
 
     def make_guessed_word(self):
         self.guessed_word = random.choice(self.guessed_words)  # Random choice guessed word
@@ -47,13 +50,21 @@ class Hangman:
                 self.hint_word[i] = guess_letter
 
     def check_letter(self, guess_letter: str):
+        global curr_life
         if guess_letter in self.guessed_word:
-            self.update_hint(guess_letter)
+            if guess_letter in self.used_letter:
+                print("No improvements")
+                curr_life += 1
+            else:
+                self.update_hint(guess_letter)
         else:
+            curr_life += 1
             print("No such letter in the word")
 
+        self.used_letter.append(guess_letter)
+
     def check_word(self, word):
-        return word == self.guessed_word
+        return "".join(word) == self.guessed_word
 
     def start(self):
         self.print_title()
@@ -65,6 +76,7 @@ hangman = Hangman()
 hangman.start()
 
 curr_life: int = 1
+
 while curr_life <= hangman.user_lives:
     hangman.print_hint()
     letter: str = input("Input a letter: > ")
@@ -74,6 +86,6 @@ while curr_life <= hangman.user_lives:
         hangman.user_status = "win"
         hangman.print_end_game()
         break
-    curr_life += 1
+
 else:
     hangman.print_end_game()
