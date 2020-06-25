@@ -51,15 +51,17 @@ class Hangman:
 
     def check_letter(self, guess_letter: str):
         global curr_life
-        if guess_letter in self.guessed_word:
-            if guess_letter in self.used_letter:
-                print("No improvements")
-                curr_life += 1
-            else:
-                self.update_hint(guess_letter)
+        if guess_letter in self.used_letter:
+            print("You already typed this letter")
+        elif len(guess_letter) > 1:
+            print("You should input a single letter")
+        elif not guess_letter.isascii() or not guess_letter.islower():
+            print("It is not an ASCII lowercase letter")
+        elif guess_letter in self.guessed_word:
+            self.update_hint(guess_letter)
         else:
-            curr_life += 1
             print("No such letter in the word")
+            curr_life += 1
 
         self.used_letter.append(guess_letter)
 
